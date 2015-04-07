@@ -33,23 +33,17 @@ define Package/python-setuptools/description
   Easily download, build, install, upgrade, and uninstall Python packages
 endef
 
-PYTHONPATH:=$(PKG_INSTALL_DIR)/$(PYTHON_PKG_DIR)
 define Build/Compile
-	$(INSTALL_DIR) $(PYTHONPATH)
 	$(call Build/Compile/PyMod,,\
 		install --prefix="$(PKG_INSTALL_DIR)/usr" \
 	)
 endef
 
-define PyPackage/python-setuptools/filespec
-+|/usr/lib/python$(PYTHON_VERSION)/site-packages
-endef
-
 define Build/InstallDev
-	$(INSTALL_DIR) $(2)/lib/python$(PYTHON_VERSION)/site-packages
+	$(INSTALL_DIR) $(PYTHON_LIB_DIR)
 	$(CP) \
-		$(PKG_INSTALL_DIR)/usr/lib/python$(PYTHON_VERSION)/site-packages/* \
-		$(HOST_PYTHON_LIB_DIR)/site-packages
+		$(PKG_INSTALL_DIR)$(PYTHON_PKG_DIR)/* \
+		$(PYTHON_LIB_DIR)
 endef
 
 define PyPackage/python-setuptools/install

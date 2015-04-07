@@ -11,8 +11,8 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openvswitch
 
-PKG_RELEASE:=1
-PKG_VERSION:=2.3.0
+PKG_RELEASE:=2
+PKG_VERSION:=2.3.1
 PKG_RELEASE=$(PKG_SOURCE_VERSION)
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=COPYING
@@ -21,7 +21,7 @@ PKG_USE_MIPS16:=0
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/openvswitch/ovs
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=2b70c4b929d18d1f36dcdeb71ea5c383cbb662e9
+PKG_SOURCE_VERSION:=0dfed4ba9c8a16a1f316d709b7831a4e139472d4
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 
 include $(INCLUDE_DIR)/package.mk
@@ -50,7 +50,8 @@ endef
 define Package/openvswitch
   $(call Package/openvswitch/Default)
   TITLE:=Open vSwitch Userspace Package
-  DEPENDS:=+libpcap +libopenssl +librt +libatomic +kmod-openvswitch
+  DEPENDS:=+libpcap +libopenssl +librt +libatomic +kmod-openvswitch \
+           @(LINUX_3_8||LINUX_3_10||LINUX_3_13||LINUX_3_14)
 endef
 
 define Package/openvswitch/description
@@ -94,7 +95,8 @@ define KernelPackage/openvswitch
   SUBMENU:=Network Support
   TITLE:=Open vSwitch Kernel Package
   KCONFIG:=CONFIG_BRIDGE
-  DEPENDS:=+kmod-stp +kmod-ipv6 +kmod-gre +kmod-lib-crc32c +kmod-vxlan
+  DEPENDS:=+kmod-stp +kmod-ipv6 +kmod-gre +kmod-lib-crc32c +kmod-vxlan \
+           @(LINUX_3_8||LINUX_3_10||LINUX_3_13||LINUX_3_14)
   FILES:= \
 	$(PKG_BUILD_DIR)/datapath/linux/openvswitch.$(LINUX_KMOD_SUFFIX)
   AUTOLOAD:=$(call AutoLoad,21,openvswitch)
@@ -136,7 +138,7 @@ define Build/Compile
 		ARCH="$(LINUX_KARCH)" \
 		SUBDIRS="$(PKG_BUILD_DIR)/datapath/linux" \
 		PATH="$(TARGET_PATH)" \
-		KCFLAGS="$(KCFLAGS)" \
+		EXTRA_CFLAGS="$(KCFLAGS)" \
 		KCC="$(KERNEL_CC)"
 endef
 
